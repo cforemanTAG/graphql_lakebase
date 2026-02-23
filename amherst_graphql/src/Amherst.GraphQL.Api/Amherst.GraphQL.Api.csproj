@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="HotChocolate.AspNetCore" Version="15.1.*" />
+    <PackageReference Include="HotChocolate.Data" Version="15.1.*" />
+    <PackageReference Include="HotChocolate.Data.EntityFramework" Version="15.1.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Amherst.GraphQL.Infrastructure\Amherst.GraphQL.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

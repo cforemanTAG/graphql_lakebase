@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{004F551A-2CAF-43A3-9F7D-DEB088CA7BC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amherst.GraphQL.Domain", "src\Amherst.GraphQL.Domain\Amherst.GraphQL.Domain.csproj", "{8E072742-594F-4CDE-B462-C9DEFAD1F230}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amherst.GraphQL.Application", "src\Amherst.GraphQL.Application\Amherst.GraphQL.Application.csproj", "{2F50C394-F8CA-40AB-A910-FE83D106537C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amherst.GraphQL.Infrastructure", "src\Amherst.GraphQL.Infrastructure\Amherst.GraphQL.Infrastructure.csproj", "{9538C310-19A7-483D-8BF5-DD9876FFA8C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amherst.GraphQL.Api", "src\Amherst.GraphQL.Api\Amherst.GraphQL.Api.csproj", "{121CFE69-BE67-4E1A-A0B3-AE3AAA7B271F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E072742-594F-4CDE-B462-C9DEFAD1F230}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E072742-594F-4CDE-B462-C9DEFAD1F230}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E072742-594F-4CDE-B462-C9DEFAD1F230}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E072742-594F-4CDE-B462-C9DEFAD1F230}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F50C394-F8CA-40AB-A910-FE83D106537C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F50C394-F8CA-40AB-A910-FE83D106537C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F50C394-F8CA-40AB-A910-FE83D106537C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F50C394-F8CA-40AB-A910-FE83D106537C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9538C310-19A7-483D-8BF5-DD9876FFA8C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9538C310-19A7-483D-8BF5-DD9876FFA8C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9538C310-19A7-483D-8BF5-DD9876FFA8C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9538C310-19A7-483D-8BF5-DD9876FFA8C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{121CFE69-BE67-4E1A-A0B3-AE3AAA7B271F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{121CFE69-BE67-4E1A-A0B3-AE3AAA7B271F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{121CFE69-BE67-4E1A-A0B3-AE3AAA7B271F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{121CFE69-BE67-4E1A-A0B3-AE3AAA7B271F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8E072742-594F-4CDE-B462-C9DEFAD1F230} = {004F551A-2CAF-43A3-9F7D-DEB088CA7BC0}
+		{2F50C394-F8CA-40AB-A910-FE83D106537C} = {004F551A-2CAF-43A3-9F7D-DEB088CA7BC0}
+		{9538C310-19A7-483D-8BF5-DD9876FFA8C0} = {004F551A-2CAF-43A3-9F7D-DEB088CA7BC0}
+		{121CFE69-BE67-4E1A-A0B3-AE3AAA7B271F} = {004F551A-2CAF-43A3-9F7D-DEB088CA7BC0}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Amherst.GraphQL.Domain\Amherst.GraphQL.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
