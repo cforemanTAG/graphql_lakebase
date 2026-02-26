@@ -8,9 +8,13 @@ builder.Services.AddInfrastructure(builder.Configuration);
 
 builder.Services
     .AddGraphQLServer()
+    .AddSpatialTypes()
+    .AddFiltering()
+    .AddProjections()
+    .AddSpatialFiltering()
+    .AddSpatialProjections()
     .AddQueryType()
     .AddTypeExtension(typeof(GeoQueries))
-    .AddFiltering()
     .AddSorting()
     .RegisterDbContextFactory<GeoDbContext>();
 

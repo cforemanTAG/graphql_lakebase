@@ -1,6 +1,7 @@
 using Amherst.GraphQL.Application.Ports;
 using Amherst.GraphQL.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 
 namespace Amherst.GraphQL.Infrastructure.Postgres;
 
@@ -17,13 +18,13 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
             .Where(g => g.GeoTypeCode == geoTypeCode && g.GeoValue == geoValue);
     }
 
-    public IQueryable<Geo> QueryContaining(double latitude, double longitude)
+    public IQueryable<Geo> QueryContainingRaw(double latitude, double longitude)
     {
         // Use FromSql (interpolated overload) for parameterized PostGIS spatial query.
         // SELECT must list all 7 mapped columns explicitly.
-        // ST_MakePoint takes (longitude, latitude) — note the reversed parameter order.
         // The ::geography cast ensures type compatibility with the geo_polygon column.
-        return db.Geos.FromSql(
+        return db.Geos
+            .FromSql(
             $"""
             SELECT geo_src, geo_type_code, geo_type_name, geo_value,
                    geo_name, wkt_polygon, spatial_index
@@ -35,4 +36,67 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
             """)
             .AsNoTracking();
     }
+
+    public IQueryable<Geo> QueryContaining(double latitude, double longitude)
+    {
+        // Use FromSql (interpolated overload) for parameterized PostGIS spatial query.
+        // SELECT must list all 7 mapped columns explicitly.
+        // The ::geography cast ensures type compatibility with the geo_polygon column.
+        var query =  db.Geos
+            .AsNoTracking()
+            .Where(g => g.GeoPolygon.Contains(new Point(longitude, latitude){ SRID = 4326 }));
+        
+        return query;
+    }
+
+    public IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null)
+    {
+        // Test with: (lat,long) 30.6008245, -97.8612775
+        // Convert radiusMiles to meters (miles * 1609.344)
+        // Use FromSql with ST_DWithin(geo_polygon, point, meters) — same 7-column SELECT as above
+        // The point should be ST_SetSRID(ST_MakePoint(lon, lat), 4326)::geography
+        // If geoTypeCode is not null, append .Where(g => g.GeoTypeCode == geoTypeCode) via LINQ
+        // Return .AsNoTracking()
+        var query = db.Geos.FromSql(
+            $"""
+            SELECT geo_src, geo_type_code, geo_type_name, geo_value,
+            geo_name, wkt_polygon, spatial_index
+            FROM geo_shapes
+            WHERE ST_DWithin(geo_polygon, ST_Point({longitude}, {latitude}, 4326)::geography, {radiusMiles} * 1609.3440006);
+            """
+        );
+
+        if (geoTypeCode is not null)
+        {
+            query.Where(g => g.GeoTypeCode == geoTypeCode);
+        }
+
+        return query.AsNoTracking();
+    }
+
+    public IQueryable<Geo> QueryByRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null)
+        => throw new NotImplementedException();
+
+    // public IQueryable<Geo> QueryByRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null)
+    // {
+    //     // Test with: (lat,long) 30.6008245, -97.8612775
+    //     // Convert radiusMiles to meters (miles * 1609.344)
+    //     // Use FromSql with ST_DWithin(geo_polygon, point, meters) — same 7-column SELECT as above
+    //     // The point should be ST_SetSRID(ST_MakePoint(lon, lat), 4326)::geography
+    //     // If geoTypeCode is not null, append .Where(g => g.GeoTypeCode == geoTypeCode) via LINQ
+    //     // Return .AsNoTracking()
+    //     var point = new Point(longitude, latitude) { SRID = 4326 };
+    //     var radiusBuffer = point.Buffer()
+
+    //     var query = db.Geos
+    //         .AsNoTracking()
+    //         .Where(g => g.GeoPolygon.Within())
+
+    //     if (geoTypeCode is not null)
+    //     {
+    //         query.Where(g => g.GeoTypeCode == geoTypeCode);
+    //     }
+
+    //     return query.AsNoTracking();
+    // }
 }

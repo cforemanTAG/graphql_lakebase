@@ -24,5 +24,8 @@ public class GeoConfiguration : IEntityTypeConfiguration<Geo>
         builder.Property(g => g.GeoName).HasColumnName("geo_name");
         builder.Property(g => g.WktPolygon).HasColumnName("wkt_polygon");
         builder.Property(g => g.SpatialIndex).HasColumnName("spatial_index");
+        builder.Property(g => g.GeoPolygon)
+            .HasColumnName("geo_polygon")
+            .HasColumnType("geography");
     }
 }

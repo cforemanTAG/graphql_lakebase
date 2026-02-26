@@ -24,11 +24,27 @@ public static class GeoQueries
 
     [UseFiltering]
     [UseSorting]
-    public static IQueryable<Geo> GetGeosContaining(
+    public static IQueryable<Geo> GetGeosWithinRadius(
         double latitude,
         double longitude,
+        double radiusMiles,
+        string? geoTypeCode,
         [Service] IGeoRepository repository)
     {
-        return repository.QueryContaining(latitude, longitude);
+        // Delegate to repository — note lat/lon flip to match PostGIS lon/lat convention
+        // Pass all params through including optional geoTypeCode
+        return repository.QueryWithinRadius(latitude, longitude, radiusMiles, geoTypeCode);
+    }
+
+    public static IQueryable<Geo> GetGeosByRadius(
+        double latitude,
+        double longitude,
+        double radiusMiles,
+        string? geoTypeCode,
+        [Service] IGeoRepository repository)
+    {
+        // Delegate to repository — note lat/lon flip to match PostGIS lon/lat convention
+        // Pass all params through including optional geoTypeCode
+        return repository.QueryWithinRadius(latitude, longitude, radiusMiles, geoTypeCode);
     }
 }

@@ -1,3 +1,6 @@
+using HotChocolate.Types.Spatial;
+using NetTopologySuite.Geometries;
+
 namespace Amherst.GraphQL.Domain.Entities;
 
 /// <summary>
@@ -14,4 +17,5 @@ public class Geo
     public string? GeoName { get; set; }
     public string? WktPolygon { get; set; }
     public long? SpatialIndex { get; set; }
+    public MultiPolygon GeoPolygon { get; set; } = new MultiPolygon([]);
 }

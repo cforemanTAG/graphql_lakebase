@@ -18,4 +18,13 @@ public interface IGeoRepository
     /// Note: latitude/longitude order here — SQL reverses them for ST_MakePoint(lon, lat).
     /// </summary>
     IQueryable<Geo> QueryContaining(double latitude, double longitude);
+
+    /// <summary>
+    /// Radius search — returns geos within radiusMiles of the point,
+    /// optionally filtered by geo type code.
+    /// Note: accepts longitude first (PostGIS convention).
+    /// </summary>
+    IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null);
+
+    IQueryable<Geo> QueryByRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null);
 }

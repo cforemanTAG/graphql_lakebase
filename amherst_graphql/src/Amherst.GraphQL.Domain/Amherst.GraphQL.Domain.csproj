@@ -1,2 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="HotChocolate.Data.Spatial" Version="15.1.12" />
+    <PackageReference Include="HotChocolate.Types.Spatial" Version="15.1.12" />
+  </ItemGroup>
 </Project>

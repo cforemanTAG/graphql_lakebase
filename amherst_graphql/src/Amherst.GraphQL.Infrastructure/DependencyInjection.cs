@@ -11,9 +11,7 @@ public static class DependencyInjection
     /// <summary>
     /// Registers Infrastructure services: pooled DbContext factory, scoped DbContext, and repository.
     /// </summary>
-    public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,
-        IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         // Read connection string from the "Postgres" config section.
         var settings = configuration
