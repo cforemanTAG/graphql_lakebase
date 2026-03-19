@@ -39,14 +39,32 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
 
     public IQueryable<Geo> QueryContaining(double latitude, double longitude)
     {
+        /*
+        NOTE: This does the same thing as QueryContainingRaw right now because I commented out the code
+        */
+
+        
         // Use FromSql (interpolated overload) for parameterized PostGIS spatial query.
         // SELECT must list all 7 mapped columns explicitly.
         // The ::geography cast ensures type compatibility with the geo_polygon column.
-        var query =  db.Geos
-            .AsNoTracking()
-            .Where(g => g.GeoPolygon.Contains(new Point(longitude, latitude){ SRID = 4326 }));
+
+
+        // var query =  db.Geos
+        //     .AsNoTracking()
+        //     .Where(g => g.GeoPolygon.Contains(new Point(longitude, latitude){ SRID = 4326 }));
         
-        return query;
+        return db.Geos
+            .FromSql(
+            $"""
+            SELECT geo_src, geo_type_code, geo_type_name, geo_value,
+                   geo_name, wkt_polygon, spatial_index
+            FROM   geo_shapes
+            WHERE  ST_Covers(
+                       geo_polygon,
+                       ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4326)::geography
+                   )
+            """)
+            .AsNoTracking();
     }
 
     public IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null)
@@ -68,7 +86,7 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
 
         if (geoTypeCode is not null)
         {
-            query.Where(g => g.GeoTypeCode == geoTypeCode);
+            query = query.Where(g => g.GeoTypeCode == geoTypeCode);
         }
 
         return query.AsNoTracking();

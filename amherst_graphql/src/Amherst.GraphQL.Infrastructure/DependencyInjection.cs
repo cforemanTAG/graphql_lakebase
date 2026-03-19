@@ -21,7 +21,7 @@ public static class DependencyInjection
         // Register pooled DbContext factory with Npgsql and NoTracking.
         services.AddPooledDbContextFactory<GeoDbContext>(options =>
             options
-                .UseNpgsql(settings.ConnectionString)
+                .UseNpgsql(settings.ConnectionString, o => o.UseNetTopologySuite())
                 .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
         // Register scoped DbContext resolved from the factory (for direct repository injection).

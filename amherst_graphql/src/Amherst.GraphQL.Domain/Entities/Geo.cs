@@ -17,5 +17,5 @@ public class Geo
     public string? GeoName { get; set; }
     public string? WktPolygon { get; set; }
     public long? SpatialIndex { get; set; }
-    public MultiPolygon GeoPolygon { get; set; } = new MultiPolygon([]);
+    // public MultiPolygon GeoPolygon { get; set; } = new MultiPolygon([]);
 }

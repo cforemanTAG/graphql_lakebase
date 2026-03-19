@@ -13,7 +13,7 @@ namespace Amherst.GraphQL.Api.Queries;
 [QueryType]
 public static class GeoQueries
 {
-    [UseSorting]
+    // [UseSorting]
     public static IQueryable<Geo> GetGeo(
         string geoTypeCode,
         string geoValue,
