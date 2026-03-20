@@ -28,23 +28,25 @@ public static class GeoQueries
         double latitude,
         double longitude,
         double radiusMiles,
-        string? geoTypeCode,
+        string? geoTypeCodeFilter,
         [Service] IGeoRepository repository)
     {
         // Delegate to repository — note lat/lon flip to match PostGIS lon/lat convention
         // Pass all params through including optional geoTypeCode
-        return repository.QueryWithinRadius(latitude, longitude, radiusMiles, geoTypeCode);
+        return repository.QueryWithinRadius(latitude, longitude, radiusMiles, geoTypeCodeFilter);
     }
 
-    public static IQueryable<Geo> GetGeosByRadius(
-        double latitude,
-        double longitude,
-        double radiusMiles,
-        string? geoTypeCode,
+    // [UseFiltering]
+    [UseSorting]
+    public static IQueryable<Geo> GetGeosIntersersectingGeo(
+        string geoTypeCode,
+        string geoValue,
+        string? geoTypeCodeFilter,
         [Service] IGeoRepository repository)
     {
-        // Delegate to repository — note lat/lon flip to match PostGIS lon/lat convention
-        // Pass all params through including optional geoTypeCode
-        return repository.QueryWithinRadius(latitude, longitude, radiusMiles, geoTypeCode);
+        
+        var result = repository.QueryIntersecting(geoTypeCode, geoValue, geoTypeCodeFilter);
+        var count = result.Count();
+        return result;
     }
 }

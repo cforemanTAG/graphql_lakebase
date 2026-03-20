@@ -20,11 +20,13 @@ public interface IGeoRepository
     IQueryable<Geo> QueryContaining(double latitude, double longitude);
 
     /// <summary>
+    /// Spatial polygon-intersects-polygon search using PostGIS ST_Intersects.
+    /// </summary>
+    IQueryable<Geo> QueryIntersecting(string geoTypeCode, string geoValue, string? geoTypeCodeFilter = null);
+
+    /// <summary>
     /// Radius search — returns geos within radiusMiles of the point,
     /// optionally filtered by geo type code.
-    /// Note: accepts longitude first (PostGIS convention).
     /// </summary>
-    IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null);
-
-    IQueryable<Geo> QueryByRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null);
+    IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCodeFilter = null);
 }

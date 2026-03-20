@@ -67,6 +67,31 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
             .AsNoTracking();
     }
 
+    
+    public IQueryable<Geo> QueryIntersecting(string geoTypeCode, string geoValue, string? geoTypeCodeFilter = null)
+    {
+        var query = db.Geos
+            .FromSql(
+            $"""
+            SELECT gint.geo_src, gint.geo_type_code, gint.geo_type_name, gint.geo_value,
+                gint.geo_name, gint.wkt_polygon, gint.spatial_index
+            FROM   geo_shapes as gsource
+            JOIN   geo_shapes as gint
+                ON	ST_Intersects(gsource.geo_polygon, gint.geo_polygon)
+                AND ST_Area(
+                    ST_Intersection(gsource.geo_polygon, gint.geo_polygon)
+                ) > 1
+            WHERE  gsource.geo_type_code = {geoTypeCode}
+            AND	   gsource.geo_value = {geoValue}
+            AND    (gint.geo_type_code != {geoTypeCode} AND gint.geo_value != {geoValue})            
+            """);
+            
+            if (geoTypeCodeFilter is not null)
+                query = query.Where(g => g.GeoTypeCode == geoTypeCodeFilter);
+            
+            return query.AsNoTracking();
+    }
+
     public IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null)
     {
         // Test with: (lat,long) 30.6008245, -97.8612775
@@ -92,8 +117,9 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
         return query.AsNoTracking();
     }
 
-    public IQueryable<Geo> QueryByRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null)
-        => throw new NotImplementedException();
+    /* NOTE:
+        Below was an attempt to not use raw sql
+    */
 
     // public IQueryable<Geo> QueryByRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null)
     // {
