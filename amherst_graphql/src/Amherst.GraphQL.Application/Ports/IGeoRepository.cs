@@ -11,7 +11,7 @@ public interface IGeoRepository
     /// <summary>
     /// Exact-match lookup by composite key (geoTypeCode, geoValue).
     /// </summary>
-    IQueryable<Geo> Query(string geoTypeCode, string geoValue);
+    IQueryable<Geo> Query(GeoTypeCode geoTypeCode, string geoValue);
 
     /// <summary>
     /// Spatial point-in-polygon search using PostGIS ST_Covers.
@@ -22,11 +22,11 @@ public interface IGeoRepository
     /// <summary>
     /// Spatial polygon-intersects-polygon search using PostGIS ST_Intersects.
     /// </summary>
-    IQueryable<Geo> QueryIntersecting(string geoTypeCode, string geoValue, string? geoTypeCodeFilter = null);
+    IQueryable<Geo> QueryIntersecting(GeoTypeCode geoTypeCode, string geoValue, GeoTypeCode? geoTypeCodeFilter = null);
 
     /// <summary>
     /// Radius search — returns geos within radiusMiles of the point,
     /// optionally filtered by geo type code.
     /// </summary>
-    IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCodeFilter = null);
+    IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, GeoTypeCode? geoTypeCodeFilter = null);
 }

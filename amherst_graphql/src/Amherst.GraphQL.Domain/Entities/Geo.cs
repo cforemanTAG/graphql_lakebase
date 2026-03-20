@@ -11,7 +11,7 @@ namespace Amherst.GraphQL.Domain.Entities;
 public class Geo
 {
     public string? GeoSrc { get; set; }
-    public string GeoTypeCode { get; set; } = string.Empty;
+    public GeoTypeCode GeoTypeCode { get; set; }
     public string? GeoTypeName { get; set; }
     public string GeoValue { get; set; } = string.Empty;
     public string? GeoName { get; set; }

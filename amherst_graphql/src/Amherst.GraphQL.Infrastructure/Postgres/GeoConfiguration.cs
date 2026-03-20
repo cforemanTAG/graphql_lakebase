@@ -18,7 +18,11 @@ public class GeoConfiguration : IEntityTypeConfiguration<Geo>
         builder.HasKey(g => new { g.GeoTypeCode, g.GeoValue });
 
         builder.Property(g => g.GeoSrc).HasColumnName("geo_src");
-        builder.Property(g => g.GeoTypeCode).HasColumnName("geo_type_code");
+        builder.Property(g => g.GeoTypeCode)
+            .HasColumnName("geo_type_code")
+            .HasConversion(
+                v => v.ToSnakeCase(),
+                v => GeoTypeCodeExtensions.FromSnakeCase(v));
         builder.Property(g => g.GeoTypeName).HasColumnName("geo_type_name");
         builder.Property(g => g.GeoValue).HasColumnName("geo_value");
         builder.Property(g => g.GeoName).HasColumnName("geo_name");

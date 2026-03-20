@@ -15,7 +15,7 @@ public static class GeoQueries
 {
     // [UseSorting]
     public static IQueryable<Geo> GetGeo(
-        string geoTypeCode,
+        GeoTypeCode geoTypeCode,
         string geoValue,
         [Service] IGeoRepository repository)
     {
@@ -28,7 +28,7 @@ public static class GeoQueries
         double latitude,
         double longitude,
         double radiusMiles,
-        string? geoTypeCodeFilter,
+        GeoTypeCode? geoTypeCodeFilter,
         [Service] IGeoRepository repository)
     {
         // Delegate to repository — note lat/lon flip to match PostGIS lon/lat convention
@@ -39,14 +39,12 @@ public static class GeoQueries
     // [UseFiltering]
     [UseSorting]
     public static IQueryable<Geo> GetGeosIntersersectingGeo(
-        string geoTypeCode,
+        GeoTypeCode geoTypeCode,
         string geoValue,
-        string? geoTypeCodeFilter,
+        GeoTypeCode? geoTypeCodeFilter,
         [Service] IGeoRepository repository)
     {
         
-        var result = repository.QueryIntersecting(geoTypeCode, geoValue, geoTypeCodeFilter);
-        var count = result.Count();
-        return result;
+        return repository.QueryIntersecting(geoTypeCode, geoValue, geoTypeCodeFilter);
     }
 }

@@ -10,7 +10,7 @@ namespace Amherst.GraphQL.Infrastructure.Postgres;
 /// </summary>
 public class GeoRepository(GeoDbContext db) : IGeoRepository
 {
-    public IQueryable<Geo> Query(string geoTypeCode, string geoValue)
+    public IQueryable<Geo> Query(GeoTypeCode geoTypeCode, string geoValue)
     {
         // Filter by composite key using standard LINQ Where, with AsNoTracking.
         return db.Geos
@@ -68,8 +68,9 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
     }
 
     
-    public IQueryable<Geo> QueryIntersecting(string geoTypeCode, string geoValue, string? geoTypeCodeFilter = null)
+    public IQueryable<Geo> QueryIntersecting(GeoTypeCode geoTypeCode, string geoValue, GeoTypeCode? geoTypeCodeFilter = null)
     {
+        var geoTypeCodeStr = geoTypeCode.ToSnakeCase();
         var query = db.Geos
             .FromSql(
             $"""
@@ -81,18 +82,18 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
                 AND ST_Area(
                     ST_Intersection(gsource.geo_polygon, gint.geo_polygon)
                 ) > 1
-            WHERE  gsource.geo_type_code = {geoTypeCode}
+            WHERE  gsource.geo_type_code = {geoTypeCodeStr}
             AND	   gsource.geo_value = {geoValue}
-            AND    (gint.geo_type_code != {geoTypeCode} AND gint.geo_value != {geoValue})            
+            AND    (gint.geo_type_code != {geoTypeCodeStr} AND gint.geo_value != {geoValue})
             """);
-            
+
             if (geoTypeCodeFilter is not null)
-                query = query.Where(g => g.GeoTypeCode == geoTypeCodeFilter);
-            
+                query = query.Where(g => g.GeoTypeCode == geoTypeCodeFilter.Value);
+
             return query.AsNoTracking();
     }
 
-    public IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, string? geoTypeCode = null)
+    public IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, GeoTypeCode? geoTypeCode = null)
     {
         // Test with: (lat,long) 30.6008245, -97.8612775
         // Convert radiusMiles to meters (miles * 1609.344)
@@ -111,7 +112,7 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
 
         if (geoTypeCode is not null)
         {
-            query = query.Where(g => g.GeoTypeCode == geoTypeCode);
+            query = query.Where(g => g.GeoTypeCode == geoTypeCode.Value);
         }
 
         return query.AsNoTracking();
