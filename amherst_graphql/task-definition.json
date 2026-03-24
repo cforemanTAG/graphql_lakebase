@@ -1,0 +1,35 @@
+{
+  "family": "amherst-graphql-api",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::518176872646:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "api",
+      "image": "518176872646.dkr.ecr.us-east-1.amazonaws.com/amherst-graphql-api:latest",
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "environment": [
+        {
+          "name": "Postgres__ConnectionString",
+          "value":
+"Host=instance-25bb20af-813d-4c2d-b7f2-9301bc4564c1.database.cloud.databricks.com;Port=5432;Database=gql_lakebase;SearchPath=public,sandbox;Username=cameron;Password=amherst123"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/amherst-graphql-api",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

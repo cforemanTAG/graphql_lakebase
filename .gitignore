@@ -1,3 +1,6 @@
+# Docker init directory
+docker/
+
 ## Build results
 [Dd]ebug/
 [Rr]elease/

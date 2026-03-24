@@ -1,0 +1,220 @@
+
+
+
+aws ecr create-repository --repository-name amherst-graphql-api --region us-east-1
+{
+    "repository": {
+        "repositoryArn": "arn:aws:ecr:us-east-1:518176872646:repository/amherst-graphql-api",
+        "registryId": "518176872646",
+        "repositoryName": "amherst-graphql-api",
+        "repositoryUri": "518176872646.dkr.ecr.us-east-1.amazonaws.com/amherst-graphql-api",
+        "createdAt": "2026-03-23T14:06:13.623000-05:00",
+        "imageTagMutability": "MUTABLE",
+        "imageScanningConfiguration": {
+            "scanOnPush": false
+        },
+        "encryptionConfiguration": {
+            "encryptionType": "AES256"
+        }
+    }
+}
+
+
+
+aws ecs create-cluster --cluster-name amherst-graphql --region us-east-1
+{
+    "cluster": {
+        "clusterArn": "arn:aws:ecs:us-east-1:518176872646:cluster/amherst-graphql",
+        "clusterName": "amherst-graphql",
+        "status": "ACTIVE",
+        "registeredContainerInstancesCount": 0,
+        "runningTasksCount": 0,
+        "pendingTasksCount": 0,
+        "activeServicesCount": 0,
+        "statistics": [],
+        "tags": [],
+        "settings": [
+            {
+                "name": "containerInsights",
+                "value": "disabled"
+            }
+        ],
+        "capacityProviders": [],
+        "defaultCapacityProviderStrategy": []
+    }
+}
+
+
+
+
+aws ecs register-task-definition --cli-input-json file://task-definition.json
+{
+    "taskDefinition": {
+        "taskDefinitionArn": "arn:aws:ecs:us-east-1:518176872646:task-definition/amherst-graphql-api:1",
+        "containerDefinitions": [
+            {
+                "name": "api",
+                "image": "518176872646.dkr.ecr.us-east-1.amazonaws.com/amherst-graphql-api:latest",
+                "cpu": 0,
+                "portMappings": [
+                    {
+                        "containerPort": 8080,
+                        "hostPort": 8080,
+                        "protocol": "tcp"
+                    }
+                ],
+                "essential": true,
+                "environment": [
+                    {
+                        "name": "Postgres__ConnectionString",
+                        "value": "Host=instance-25bb20af-813d-4c2d-b7f2-9301bc4564c1.database.cloud.databricks.com;Port=5432;Database=gql_lakebase;SearchPath=public,sandbox;Username=cameron;Password=amherst123"
+                    }
+                ],
+                "mountPoints": [],
+                "volumesFrom": [],
+                "logConfiguration": {
+                    "logDriver": "awslogs",
+                    "options": {
+                        "awslogs-group": "/ecs/amherst-graphql-api",
+                        "awslogs-region": "us-east-1",
+                        "awslogs-stream-prefix": "ecs"
+                    }
+                },
+                "systemControls": []
+            }
+        ],
+        "family": "amherst-graphql-api",
+        "executionRoleArn": "arn:aws:iam::518176872646:role/ecsTaskExecutionRole",
+        "networkMode": "awsvpc",
+        "revision": 1,
+        "volumes": [],
+        "status": "ACTIVE",
+        "requiresAttributes": [
+            {
+                "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+            },
+            {
+                "name": "ecs.capability.execution-role-awslogs"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.ecr-auth"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+            },
+            {
+                "name": "ecs.capability.execution-role-ecr-pull"
+            },
+            {
+                "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+            },
+            {
+                "name": "ecs.capability.task-eni"
+            }
+        ],
+        "placementConstraints": [],
+        "compatibilities": [
+            "EC2",
+            "FARGATE",
+            "MANAGED_INSTANCES"
+        ],
+        "requiresCompatibilities": [
+            "FARGATE"
+        ],
+        "cpu": "256",
+        "memory": "512",
+        "registeredAt": "2026-03-23T14:17:59.930000-05:00",
+        "registeredBy": "arn:aws:iam::518176872646:user/cforeman-su"
+    }
+}
+
+
+
+aws ecs create-service \
+    --cluster amherst-graphql \
+    --service-name amherst-graphql-api \
+    --task-definition amherst-graphql-api \
+    --desired-count 1 \
+    --launch-type FARGATE \
+    --network-configuration "awsvpcConfiguration={subnets=[subnet-0ca78c839ed0accf1,subnet-081f3ad9836c36769],securityGroups=[sg-0176311a097ef071e],assignPublicIp=DISABLED}"
+{
+"service": {
+    "serviceArn": "arn:aws:ecs:us-east-1:518176872646:service/amherst-graphql/amherst-graphql-api",
+    "serviceName": "amherst-graphql-api",
+    "clusterArn": "arn:aws:ecs:us-east-1:518176872646:cluster/amherst-graphql",
+    "loadBalancers": [],
+    "serviceRegistries": [],
+    "status": "ACTIVE",
+    "desiredCount": 1,
+    "runningCount": 0,
+    "pendingCount": 0,
+    "launchType": "FARGATE",
+    "platformVersion": "LATEST",
+    "platformFamily": "Linux",
+    "taskDefinition": "arn:aws:ecs:us-east-1:518176872646:task-definition/amherst-graphql-api:1",
+    "deploymentConfiguration": {
+        "deploymentCircuitBreaker": {
+            "enable": false,
+            "rollback": false
+        },
+        "maximumPercent": 200,
+        "minimumHealthyPercent": 100
+    },
+    "deployments": [
+        {
+            "id": "ecs-svc/2342810200013059944",
+            "status": "PRIMARY",
+            "taskDefinition": "arn:aws:ecs:us-east-1:518176872646:task-definition/amherst-graphql-api:1",
+            "desiredCount": 0,
+            "pendingCount": 0,
+            "runningCount": 0,
+            "failedTasks": 0,
+            "createdAt": "2026-03-23T14:30:09.628000-05:00",
+            "updatedAt": "2026-03-23T14:30:09.628000-05:00",
+            "launchType": "FARGATE",
+            "platformVersion": "1.4.0",
+            "platformFamily": "Linux",
+            "networkConfiguration": {
+                "awsvpcConfiguration": {
+                    "subnets": [
+                        "subnet-0ca78c839ed0accf1",
+                        "subnet-081f3ad9836c36769"
+                    ],
+                    "securityGroups": [
+                        "sg-0176311a097ef071e"
+                    ],
+                    "assignPublicIp": "DISABLED"
+                }
+            },
+            "rolloutState": "IN_PROGRESS",
+            "rolloutStateReason": "ECS deployment ecs-svc/2342810200013059944 in progress."
+        }
+    ],
+    "roleArn": "arn:aws:iam::518176872646:role/aws-service-role/ecs.amazonaws.com/AWSServiceRoleForECS",
+    "events": [],
+    "createdAt": "2026-03-23T14:30:09.628000-05:00",
+    "placementConstraints": [],
+    "placementStrategy": [],
+    "networkConfiguration": {
+        "awsvpcConfiguration": {
+            "subnets": [
+                "subnet-0ca78c839ed0accf1",
+                "subnet-081f3ad9836c36769"
+            ],
+            "securityGroups": [
+                "sg-0176311a097ef071e"
+            ],
+            "assignPublicIp": "DISABLED"
+        }
+    },
+    "healthCheckGracePeriodSeconds": 0,
+    "schedulingStrategy": "REPLICA",
+    "deploymentController": {
+        "type": "ECS"
+    },
+    "createdBy": "arn:aws:iam::518176872646:user/cforeman-su",
+    "enableECSManagedTags": false,
+    "propagateTags": "NONE",
+    "enableExecuteCommand": false
+}
+}
