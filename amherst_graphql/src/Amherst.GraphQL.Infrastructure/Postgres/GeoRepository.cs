@@ -18,7 +18,7 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
             .Where(g => g.GeoTypeCode == geoTypeCode && g.GeoValue == geoValue);
     }
 
-    public IQueryable<Geo> QueryContainingRaw(double latitude, double longitude)
+    public IQueryable<Geo> QueryCoveringRaw(double latitude, double longitude)
     {
         // Use FromSql (interpolated overload) for parameterized PostGIS spatial query.
         // SELECT must list all 7 mapped columns explicitly.
@@ -33,14 +33,13 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
                        geo_polygon,
                        ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4326)::geography
                    )
-            """)
-            .AsNoTracking();
+            """);
     }
 
-    public IQueryable<Geo> QueryContaining(double latitude, double longitude)
+    public IQueryable<Geo> QueryCovering(double latitude, double longitude, IEnumerable<GeoTypeCode>? geoTypeCodeFilter = null)
     {
         /*
-        NOTE: This does the same thing as QueryContainingRaw right now because I commented out the code
+        NOTE: This does the same thing as QueryCoveringRaw right now because I commented out the code
         */
 
         
@@ -53,7 +52,7 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
         //     .AsNoTracking()
         //     .Where(g => g.GeoPolygon.Contains(new Point(longitude, latitude){ SRID = 4326 }));
         
-        return db.Geos
+        var query = db.Geos
             .FromSql(
             $"""
             SELECT geo_src, geo_type_code, geo_type_name, geo_value,
@@ -63,8 +62,12 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
                        geo_polygon,
                        ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4326)::geography
                    )
-            """)
-            .AsNoTracking();
+            """);
+
+            if (geoTypeCodeFilter is not null)
+                query = query.Where(g => geoTypeCodeFilter.Contains(g.GeoTypeCode));
+            
+            return query.AsNoTracking();
     }
 
     
@@ -106,7 +109,7 @@ public class GeoRepository(GeoDbContext db) : IGeoRepository
             SELECT geo_src, geo_type_code, geo_type_name, geo_value,
             geo_name, wkt_polygon, spatial_index
             FROM geo_shapes
-            WHERE ST_DWithin(geo_polygon, ST_Point({longitude}, {latitude}, 4326)::geography, {radiusMiles} * 1609.3440006);
+            WHERE ST_DWithin(geo_polygon, ST_Point({longitude}, {latitude}, 4326)::geography, {radiusMiles} * 1609.3440006)
             """
         );
 

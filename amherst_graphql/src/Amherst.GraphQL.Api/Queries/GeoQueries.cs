@@ -22,8 +22,21 @@ public static class GeoQueries
         return repository.Query(geoTypeCode, geoValue);
     }
 
+    // [UseFiltering]
+    // [UseSorting]
+    public static IQueryable<Geo> GetGeosCovering(
+        double latitude,
+        double longitude,
+        IEnumerable<GeoTypeCode>? geoTypeCodeFilter,
+        [Service] IGeoRepository repository)
+    {
+        // Delegate to repository — note lat/lon flip to match PostGIS lon/lat convention
+        // Pass all params through including optional geoTypeCode
+        return repository.QueryCovering(latitude, longitude, geoTypeCodeFilter);
+    }
+
     [UseFiltering]
-    [UseSorting]
+    // [UseSorting]
     public static IQueryable<Geo> GetGeosWithinRadius(
         double latitude,
         double longitude,
@@ -37,7 +50,7 @@ public static class GeoQueries
     }
 
     // [UseFiltering]
-    [UseSorting]
+    // [UseSorting]
     public static IQueryable<Geo> GetGeosIntersersectingGeo(
         GeoTypeCode geoTypeCode,
         string geoValue,

@@ -17,7 +17,7 @@ public interface IGeoRepository
     /// Spatial point-in-polygon search using PostGIS ST_Covers.
     /// Note: latitude/longitude order here — SQL reverses them for ST_MakePoint(lon, lat).
     /// </summary>
-    IQueryable<Geo> QueryContaining(double latitude, double longitude);
+    IQueryable<Geo> QueryCovering(double latitude, double longitude, IEnumerable<GeoTypeCode>? geoTypeCodeFilter = null);
 
     /// <summary>
     /// Spatial polygon-intersects-polygon search using PostGIS ST_Intersects.
@@ -27,6 +27,7 @@ public interface IGeoRepository
     /// <summary>
     /// Radius search — returns geos within radiusMiles of the point,
     /// optionally filtered by geo type code.
+    /// Note: latitude/longitude order here — SQL reverses them for ST_Point(lon, lat).
     /// </summary>
     IQueryable<Geo> QueryWithinRadius(double latitude, double longitude, double radiusMiles, GeoTypeCode? geoTypeCodeFilter = null);
 }
